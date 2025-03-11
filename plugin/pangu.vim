@@ -92,7 +92,7 @@ function! PanGuSpacingCore(mode) range
     " 匹配模式：英文标点前空格删除
 		silent! execute a:firstline . ',' . a:lastline . 's/\s\+\([,.!?;:]\)/\1/ge'
   	" 匹配模式：英文标点后面紧跟其他英文标点
-		silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([,.!?;:]\)\%(\1\)\@!/\1/ge'
+		silent! execute a:firstline . ',' . a:lastline . 's/\(!\[.\{-}\](.\{-})\)\|\([,.!?;:]\)\([,.!?;:]\)\%(\2\)\@!/\1\2/ge'
 	endif
   " 汉字后的标点符号，转成全角符号。
   if g:pangu_rule_fullwidth_punctuation == 1
