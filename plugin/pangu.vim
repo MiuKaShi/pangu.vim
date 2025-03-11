@@ -10,6 +10,9 @@ if !exists("g:pangu_enabled")
   let g:pangu_enabled=1
 endif
 
+if !exists("g:pangu_rule_english_writing")
+  let g:pangu_rule_english_writing=1
+endif
 if !exists("g:pangu_rule_fullwidth_punctuation")
   let g:pangu_rule_fullwidth_punctuation=1
 endif
@@ -68,6 +71,33 @@ function! PanGuSpacingCore(mode) range
     let firstline = 1
     let lastline = line("$")
   endif
+
+	if g:pangu_rule_english_writing == 1
+    let l:abbr_list = [
+          \ 'Fig\.', 'Eq\.', 'Tab\.', 'Ref\.', 'Ex\.', 'e\.g\.', 'i\.e\.',
+          \ 'et al\.', 'etc\.', 'vs\.', 'Ch\.', 'Sec\.', 'Alg\.', 'App\.',
+          \ 'Def\.', 'Thm\.', 'Cor\.', 'Lem\.', 'Prop\.', 'No\.', 'Vol\.',
+          \ 'Pg\.', 'pp\.', 'viz\.', 'cf\.', 'Eqn\.', 'Figs\.', 'Eqs\.',
+          \ 'Refs\.', 'Prof\.', 'Dr\.', 'Mr\.', 'Mrs\.', 'Ms\.', 'Jr\.',
+          \ 'Sr\.', 'Ph\.D\.', 'M\.Sc\.', 'B\.Sc\.', 'Ed\.'
+          \ ]
+    " 将列表转换为正则表达式模式（用|分隔）
+    let l:pattern = join(l:abbr_list, '\|')
+    " 在学术缩写后添加空格（如果后面紧跟非空格字符）
+    silent! execute a:firstline . ',' . a:lastline . 's/\(\<\(' . l:pattern . '\)\)\(\S\)/\1 \3/ge'
+    " 匹配模式：英文标点后面紧跟字母、或下划线
+		silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([a-zA-Z_]\)/\1 \2/ge'
+  	" 匹配模式：英文标点后面紧跟其他英文标点
+		silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([,.!?;:]\)\%(\1\)\@!/\1/ge'
+	endif
+
+  " 匹配模式：英文标点后面紧跟字母、数字或下划线
+	if g:pangu_rule_auto_space == 1
+  	" 只匹配英文环境下的标点符号后添加空格
+  	silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([a-zA-Z0-9_]\)/\1 \2/ge'
+  	" 匹配模式：英文标点后面紧跟其他英文标点
+  	silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([,.!?;:]\)/\1 \2/ge'
+	endif
 
   " 汉字后的标点符号，转成全角符号。
   if g:pangu_rule_fullwidth_punctuation == 1
@@ -143,7 +173,7 @@ function! PanGuSpacingCore(mode) range
   endif
 
   " 全角数字、英文字符、英文标点。
-  if g:pangu_rule_fullwidth_alphabet == 1
+  if g:panug_rule_fullwidth_alphabet == 1
     " 65248 是相对应的全角和半角的 Unicode 偏差。
     silent! execute firstline . ',' . lastline . 's/\([０-９Ａ-Ｚａ-ｚ＠]\)/\=nr2char(char2nr(submatch(0))-65248)/g'
   endif
