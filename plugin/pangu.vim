@@ -10,6 +10,7 @@ if !exists("g:pangu_enabled")
   let g:pangu_enabled=1
 endif
 
+
 if !exists("g:pangu_rule_english_writing")
   let g:pangu_rule_english_writing=1
 endif
@@ -72,6 +73,7 @@ function! PanGuSpacingCore(mode) range
     let lastline = line("$")
   endif
 
+
 	if g:pangu_rule_english_writing == 1
     let l:abbr_list = [
           \ 'Fig\.', 'Eq\.', 'Tab\.', 'Ref\.', 'Ex\.', 'e\.g\.', 'i\.e\.',
@@ -90,15 +92,6 @@ function! PanGuSpacingCore(mode) range
   	" 匹配模式：英文标点后面紧跟其他英文标点
 		silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([,.!?;:]\)\%(\1\)\@!/\1/ge'
 	endif
-
-  " 匹配模式：英文标点后面紧跟字母、数字或下划线
-	if g:pangu_rule_auto_space == 1
-  	" 只匹配英文环境下的标点符号后添加空格
-  	silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([a-zA-Z0-9_]\)/\1 \2/ge'
-  	" 匹配模式：英文标点后面紧跟其他英文标点
-  	silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([,.!?;:]\)/\1 \2/ge'
-	endif
-
   " 汉字后的标点符号，转成全角符号。
   if g:pangu_rule_fullwidth_punctuation == 1
     silent! execute firstline . ',' . lastline . 's/\([\u4e00-\u9fa5\u3040-\u30FF]\)\.\($\|\s\+\)/\1。/g'
@@ -173,7 +166,7 @@ function! PanGuSpacingCore(mode) range
   endif
 
   " 全角数字、英文字符、英文标点。
-  if g:panug_rule_fullwidth_alphabet == 1
+  if g:pangu_rule_fullwidth_alphabet == 1
     " 65248 是相对应的全角和半角的 Unicode 偏差。
     silent! execute firstline . ',' . lastline . 's/\([０-９Ａ-Ｚａ-ｚ＠]\)/\=nr2char(char2nr(submatch(0))-65248)/g'
   endif
