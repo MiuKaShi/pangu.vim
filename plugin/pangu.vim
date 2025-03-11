@@ -87,8 +87,10 @@ function! PanGuSpacingCore(mode) range
     let l:pattern = join(l:abbr_list, '\|')
     " 在学术缩写后添加空格（如果后面紧跟非空格字符）
     silent! execute a:firstline . ',' . a:lastline . 's/\(\<\(' . l:pattern . '\)\)\(\S\)/\1 \3/ge'
-    " 匹配模式：英文标点后面紧跟字母、或下划线
+    " 匹配模式：英文标点后面紧跟字母、或下划线时加上空格
 		silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([a-zA-Z_]\)/\1 \2/ge'
+    " 匹配模式：英文标点前空格删除
+		silent! execute a:firstline . ',' . a:lastline . 's/\s\+\([,.!?;:]\)/\1/ge'
   	" 匹配模式：英文标点后面紧跟其他英文标点
 		silent! execute a:firstline . ',' . a:lastline . 's/\([,.!?;:]\)\([,.!?;:]\)\%(\1\)\@!/\1/ge'
 	endif
